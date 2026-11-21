@@ -50,3 +50,13 @@ class ResearchAnswer(BaseModel):
         default=None,
         description="Any doubts, e.g. ambiguous request or missing citation data",
     )
+
+class RejectedPaper(BaseModel):
+    """A paper that has failed the constraints + why"""
+    title: str
+    reasons: list[str]
+
+class SearchResult(BaseModel):
+    """What the search tool has handed back to the LLM afer filtering"""
+    accepted: list[Paper] = Field(default_factory=list)
+    rejected: list[RejectedPaper] = Field(default_factory=list)
