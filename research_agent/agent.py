@@ -4,15 +4,17 @@ from datetime import date
 import httpx
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.models.fallback import FallbackModel
+from pydantic_ai.models.google import GoogleModel
 
 from research_agent.filters import filter_papers
 from research_agent.models import Paper, ResearchAnswer, SearchConstraints, SearchResult
 from research_agent.tools import search_papers
 
-MAIN_MODEL = "google:gemini-3.8-flash"
-BACKUP_MODEL = "google:gemini-3.5-flash-lite"
+# Give the main model a short deadline, so we switch to the backup quickly when it's overloaded
+main_model = GoogleModel("gemini-3.8-flash", settings={"request_timeout": 20})
+backup_model = GoogleModel("gemini-3.5-flash-lite", settings={"request_timeout": 60})
 
-model = FallbackModel(MAIN_MODEL, BACKUP_MODEL)  # NEW
+model = FallbackModel(main_model, backup_model)
 
 CURRENT_YEAR = date.today().year
 
