@@ -1,0 +1,11 @@
+.idea/
+
+# Virtual environment
+.venv/
+
+# Secrets - NEVER commit this
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
