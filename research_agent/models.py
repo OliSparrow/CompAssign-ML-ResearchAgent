@@ -29,7 +29,7 @@ class SearchConstraints(BaseModel):
 
     min_citations: int | None = Field(
         default=None,
-        description="Minimum citation count. For 'around N', use roughly 0.8*N",
+        description="Minimum citation count, inclusive. 'More than 500' means 501, 'at least 500' means 500. For 'around N', use roughly 0.8*N",
     )
     max_citations: int | None = Field(
         default=None,
