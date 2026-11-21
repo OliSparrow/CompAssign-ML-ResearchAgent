@@ -91,13 +91,21 @@ backup model from a second provider would make the agent more reliable.
 
 ## Manual scores
 
-TODO: fill in from the manual columns in both CSV files.
+| Check | Before  | After   |
+|---|---------|---------|
+| Relevant paper (y) | 8 / 10  | 9 / 10  |
+| Hallucination-free explanation (y) | 11 / 13 | 13 / 13 |
+| Average explanation usefulness (1-3) | 2.31       | 2.46       |
 
-| Check | Before | After |
-|---|---|---|
-| Relevant paper (y) | ? / 10 | ? / 10 |
-| Hallucination-free explanation (y) | ? / 13 | ? / 13 |
-| Average explanation usefulness (1-3) | ? | ? |
+Scored by hand using these rules: *relevant* = the paper is about the requested topic;
+*hallucination-free* = every claim in the explanation and uncertainty note is true (checked against the
+paper's abstract and metadata on OpenAlex); *usefulness* 1 = vague or contains a wrong fact,
+2 = correct but generic or missing a requested format, 3 = specific and answers the user's question.
+Borderline cases were scored as "no".
+
+The improvements removed both hallucinations (T03, T05) and made the agent pick a more relevant paper
+for the broad request in T12. One weakness was not fixed: in T02 the user asked for a 5-7 sentence
+summary, but the agent gave 3 sentences before and only 2 after.
 
 ## Limitations of this evaluation
 
