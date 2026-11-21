@@ -16,13 +16,10 @@ def build_filter(constraints: SearchConstraints) -> str | None:
     """Turn constraints into an OpenAlex filter string, like 'publication_year:<2021,cited_by_count:>499'."""
     filters = []
 
-    if constraints.year is not None and constraints.year_operator is not None:
-        if constraints.year_operator == "before":
-            filters.append(f"publication_year:<{constraints.year}")
-        elif constraints.year_operator == "after":
-            filters.append(f"publication_year:>{constraints.year}")
-        else:
-            filters.append(f"publication_year:{constraints.year}")
+    if constraints.min_year is not None:
+        filters.append(f"publication_year:>{constraints.min_year - 1}")
+    if constraints.max_year is not None:
+        filters.append(f"publication_year:<{constraints.max_year + 1}")
 
     # OpenAlex only has strict > and <, so we shift by 1 to make our limits inclusive
     if constraints.min_citations is not None:
@@ -106,7 +103,7 @@ if __name__ == "__main__":
     load_dotenv()
     test = SearchConstraints(
         topic="retrieval augmented generation",
-        year=2021,
+        year=2020,
         year_operator="before",
         min_citations=500,
     )

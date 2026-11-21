@@ -17,7 +17,7 @@ from research_agent.agent import AgentMemory, research_agent
 from research_agent.models import Paper
 
 RESULTS_DIR = Path(__file__).parent / "results"
-PAUSE_BETWEEN_TESTS = 5  # seconds, to be gentle on the free-tier rate limits
+PAUSE_BETWEEN_TESTS = 15  # seconds, to stay under the free-tier requests-per-minute limit
 
 AUTO_CHECKS = ["found_as_expected", "year_ok", "citations_ok", "source_ok", "verified_on_openalex"]
 
@@ -110,7 +110,10 @@ def run_case(case: TestCase) -> dict:
     try:
         result = research_agent.run_sync(case.prompt, deps=AgentMemory())
     except Exception as error:
-        row["error"] = str(error)[:300]
+        details = [str(error)]
+        for sub_error in getattr(error, "exceptions", []):
+            details.append(f"{type(sub_error).__name__}: {sub_error}")
+        row["error"] = " | ".join(details)[:500]
         row["seconds"] = round(time.perf_counter() - start, 1)
         return row
 

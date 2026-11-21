@@ -8,18 +8,15 @@ def check_paper(paper: Paper, constraints: SearchConstraints) -> list[str]:
     reasons = []
 
     # Year check
-    year = constraints.year
-    operator = constraints.year_operator
+    has_year_limit = constraints.min_year is not None or constraints.max_year is not None
 
-    if year is not None and operator is not None:
-        if paper.year is None:
-            reasons.append("publication year is unknown")
-        elif operator == "before" and not paper.year < year:
-            reasons.append(f"published in {paper.year}, not before {year}")
-        elif operator == "after" and not paper.year > year:
-            reasons.append(f"published in {paper.year}, not after {year}")
-        elif operator == "in" and paper.year != year:
-            reasons.append(f"published in {paper.year}, not in {year}")
+    if has_year_limit and paper.year is None:
+        reasons.append("publication year is unknown")
+    elif has_year_limit:
+        if constraints.min_year is not None and paper.year < constraints.min_year:
+            reasons.append(f"published in {paper.year}, before the earliest allowed year {constraints.min_year}")
+        if constraints.max_year is not None and paper.year > constraints.max_year:
+            reasons.append(f"published in {paper.year}, after the latest allowed year {constraints.max_year}")
 
     # Citation check
     has_citation_limit = constraints.min_citations is not None or constraints.max_citations is not None
@@ -57,7 +54,7 @@ if __name__ == "__main__":
         Paper(openalex_id="W3", title="Too few citations", year=2024, citation_count=12),
         Paper(openalex_id="W4", title="Missing data", year=None, citation_count=None),
     ]
-    test_constraints = SearchConstraints(topic="anything", year=2022, year_operator="after", min_citations=100)
+    test_constraints = SearchConstraints(topic="anything", min_year=2023, min_citations=100)
 
     outcome = filter_papers(test_papers, test_constraints)
 

@@ -1,6 +1,4 @@
-﻿from typing import Literal
-
-from pydantic import BaseModel, Field
+﻿from pydantic import BaseModel, Field
 
 
 class Paper(BaseModel):
@@ -21,10 +19,13 @@ class SearchConstraints(BaseModel):
 
     topic: str = Field(description="Short search query, e.g. 'retrieval-augmented generation'")
 
-    year: int | None = Field(default=None, description="The year mentioned by the user, if any")
-    year_operator: Literal["before", "after", "in"] | None = Field(
+    min_year: int | None = Field(
         default=None,
-        description="How to compare publication year with 'year'",
+        description="Earliest allowed publication year, inclusive. 'After 2022' means 2023, 'in 2019' means 2019",
+    )
+    max_year: int | None = Field(
+        default=None,
+        description="Latest allowed publication year, inclusive. 'Before 2021' means 2020, 'in 2019' means 2019",
     )
 
     min_citations: int | None = Field(
